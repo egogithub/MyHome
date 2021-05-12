@@ -1,0 +1,52 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/login_header">
+
+        <EditTextPreference
+            app:key="prefLogin"
+            app:title="@string/login_title"
+            app:useSimpleSummaryProvider="true" />
+
+
+        <EditTextPreference
+            app:key="prefPassword"
+            app:title="@string/pass_title" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/connection_header">
+
+        <EditTextPreference
+            app:key="domo_ip"
+            app:title="@string/domo_ip"
+            app:useSimpleSummaryProvider="true" />
+        <CheckBoxPreference
+            app:key="use_https"
+            app:summary="HTTPS"
+            app:title="@string/use_https" />
+<!--
+        <EditTextPreference
+            app:key="domo_port"
+            app:title="@string/domo_port"
+            app:useSimpleSummaryProvider="true" />
+-->
+        <EditTextPreference
+            app:key="polling_delay"
+            app:title="@string/polling_delay"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+<!--
+        <SwitchPreferenceCompat
+            app:key="sync"
+            app:title="@string/sync_title" />
+
+        <SwitchPreferenceCompat
+            app:dependency="sync"
+            app:key="attachment"
+            app:summaryOff="@string/attachment_summary_off"
+            app:summaryOn="@string/attachment_summary_on"
+            app:title="@string/attachment_title" />
+
+    </PreferenceCategory>
+-->
+</PreferenceScreen>
