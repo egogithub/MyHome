@@ -161,4 +161,24 @@ public class MainActivity extends AppCompatActivity implements DomoVersionListen
             Log.d(TAG, "URI to insert is "+uri.toString());
         }
     }
+/*
+
+    public void onClickRetrieveStudents(View view) {
+        // Retrieve student records
+        String URL = "content://com.example.MyApplication.StudentsProvider";
+
+        Uri students = Uri.parse(URL);
+        Cursor c = managedQuery(students, null, null, null, "name");
+
+        if (c.moveToFirst()) {
+            do{
+                Toast.makeText(this,
+                        c.getString(c.getColumnIndex(StudentsProvider._ID)) +
+                                ", " +  c.getString(c.getColumnIndex( StudentsProvider.NAME)) +
+                                ", " + c.getString(c.getColumnIndex( StudentsProvider.GRADE)),
+                        Toast.LENGTH_SHORT).show();
+            } while (c.moveToNext());
+        }
+    }
+*/
 }
