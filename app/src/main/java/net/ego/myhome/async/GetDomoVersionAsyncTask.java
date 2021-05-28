@@ -24,4 +24,6 @@ public class GetDomoVersionAsyncTask extends AsyncTask<Void, Void, DomoticzInfo>
             mListener.onDomoticzVersion(domoticzInfo);
 //        }
     }
+
+
 }

@@ -9,7 +9,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MyHome">
+        android:theme="@style/Theme.MyHome"
+        >
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
@@ -28,7 +29,11 @@
                 <category android:name="intent.worldline.MAPS" />
             </intent-filter>
         </service>
+        <provider
+            android:authorities="net.ego.myhome.providers.DevicesProvider"
+            android:name=".providers.DevicesProvider" />
     </application>
+    
     <uses-permission android:name="com.worldline.spica.permission.MAPS" />
 
     <uses-permission android:name="android.permission.INTERNET" />

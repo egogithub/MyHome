@@ -5,17 +5,22 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
 
 import net.ego.myhome.MainActivity;
 import net.ego.myhome.MyHomeApp;
 import net.ego.myhome.R;
+import net.ego.myhome.pojo.DmDevice;
 import net.ego.myhome.pojo.DomoticzInfo;
 
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.preference.PreferenceManager;
 
@@ -51,6 +56,41 @@ public class DomoticzHelper {
             return null;
         }
         Log.d(TAG, "Could not connect2");
+        return null;
+    }
+
+    public static List<DmDevice> getDeviceList() {
+        try {
+            final HttpURLConnection connection = getHttpUrlConnection("/json.htm?type=command&param=devices_list");
+            connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+            connection.setRequestProperty("Content-Type", "application/json");
+
+            final int responseCode = connection.getResponseCode();
+            Log.d(TAG, "Response Code = " + responseCode);
+            if (responseCode == 200) {
+                Gson gson = new Gson();
+                JsonObject domAnswerJson = gson.fromJson(new JsonReader(new InputStreamReader(connection.getInputStream(), "UTF-8")), JsonObject.class);
+                String status = domAnswerJson.get("status").getAsString();
+                Log.d(TAG, "Status = "+status);
+                if (!status.equals("OK")) {
+                    Log.e(TAG, "Got error");
+                    return null;
+                }
+                JsonArray deviceArray = domAnswerJson.getAsJsonArray("result");
+                List<DmDevice> deviceList = new ArrayList<>();
+                for (JsonElement device: deviceArray) {
+                    DmDevice dmDevice = gson.fromJson(device, DmDevice.class);
+                    deviceList.add(dmDevice);
+                }
+                return deviceList;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(TAG, "Could not connect");
+            return null;
+        }
+        Log.d(TAG, "Could not connect");
         return null;
     }
 

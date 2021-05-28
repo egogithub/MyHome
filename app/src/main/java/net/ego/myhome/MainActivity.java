@@ -1,27 +1,36 @@
 package net.ego.myhome;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceManager;
 
+import android.app.ActionBar;
+import android.content.ContentValues;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import net.ego.myhome.async.GetDeviceListAsyncTask;
 import net.ego.myhome.async.GetDomoVersionAsyncTask;
+import net.ego.myhome.interfaces.DomoDeviceListListener;
 import net.ego.myhome.interfaces.DomoVersionListener;
+import net.ego.myhome.pojo.DmDevice;
 import net.ego.myhome.pojo.DomoticzInfo;
+import net.ego.myhome.providers.DevicesProvider;
 
-public class MainActivity extends AppCompatActivity implements DomoVersionListener, View.OnClickListener {
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements DomoVersionListener, View.OnClickListener, DomoDeviceListListener{
     private static final String TAG="MainActivity";
     private GetDomoVersionAsyncTask mVersionAsyncTask;
+    private GetDeviceListAsyncTask mDeviceListAsyncTask;
     private static boolean connected = false;
     private Button btnMain;
 
@@ -81,6 +90,12 @@ public class MainActivity extends AppCompatActivity implements DomoVersionListen
         mVersionAsyncTask.execute();
     }
 
+    private void getDeviceList() {
+        Log.d(TAG,"Getting device list");
+        mDeviceListAsyncTask = new GetDeviceListAsyncTask(this);
+        mDeviceListAsyncTask.execute();
+    }
+
     @Override
     public void onDomoticzVersion(DomoticzInfo info) {
         btnMain.setEnabled(true);
@@ -98,8 +113,9 @@ public class MainActivity extends AppCompatActivity implements DomoVersionListen
             versionText.setText("Domoticz version "+info.version);
             //btnMain.setEnabled(true);
             btnMain.setText("NEXT");
+            // Get devices list from domoticz server
+            getDeviceList();
             //btnMain.setVisibility(View.VISIBLE);
-
             //Now, get the devices info (populate database)
         }
     }
@@ -110,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements DomoVersionListen
             // Go to the next screen - Clicked on Next
         } else {
             //Clicked on Retry
+            Log.d(TAG, "Clicked on retry");
             getVersion();
         }
     }
@@ -128,7 +145,20 @@ public class MainActivity extends AppCompatActivity implements DomoVersionListen
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "Resuming Main Activity");
-        getVersion();
+        Log.d(TAG, "in onResume");
+        //getVersion();
+    }
+
+    @Override
+    public void onDevicesList(List<DmDevice> deviceList) {
+        Log.d(TAG, "Got Devices list with "+((null==deviceList)?0:deviceList.size())+" devices" );
+        for (DmDevice dmDevice :
+             deviceList) {
+            ContentValues values = new ContentValues();
+            values.put(DevicesProvider.NAME, dmDevice.name);
+            values.put(DevicesProvider.VALUE, dmDevice.value);
+            Uri uri = getContentResolver().insert(DevicesProvider.CONTENT_URI, values);
+            Log.d(TAG, "URI to insert is "+uri.toString());
+        }
     }
 }
