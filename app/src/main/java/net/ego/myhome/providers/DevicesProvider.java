@@ -43,7 +43,7 @@ public class DevicesProvider extends ContentProvider {
     }
 
     private SQLiteDatabase db;
-    static final String DATABASE_NAME = "domoticz";
+    static final String DATABASE_NAME = "domoticz.db";
     static final String DEVICES_TABLE_NAME = "devices";
     static final int DATABASE_VERSION = 1;
     static final String CREATE_DB_TABLE =

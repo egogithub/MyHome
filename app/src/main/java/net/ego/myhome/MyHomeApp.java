@@ -8,6 +8,7 @@ import be.banksys.maps.sync.EventLoop;
 public class MyHomeApp extends Application {
     private static Context mContext;
 
+
     @Override
     public void onCreate() {
         super.onCreate();

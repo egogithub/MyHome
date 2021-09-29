@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ActionBar;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements DomoVersionListen
     private GetDeviceListAsyncTask mDeviceListAsyncTask;
     private static boolean connected = false;
     private Button btnMain;
+    private Cursor mCursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements DomoVersionListen
             TextView statusText = (TextView)findViewById(R.id.textStatus);
             statusText.setText("Connection error");
             btnMain.setText("RETRY");
+            connected=false;
             //btnMain.setVisibility(View.VISIBLE);
         } else {
             Log.d(TAG, "Version = "+info.version);
@@ -115,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements DomoVersionListen
             btnMain.setText("NEXT");
             // Get devices list from domoticz server
             getDeviceList();
+            connected=true;
             //btnMain.setVisibility(View.VISIBLE);
             //Now, get the devices info (populate database)
         }
@@ -124,6 +128,20 @@ public class MainActivity extends AppCompatActivity implements DomoVersionListen
     public void onClick(View v) {
         if (connected) {
             // Go to the next screen - Clicked on Next
+            /*
+            //Getting list of devices
+            String[] mProjection = {
+                    "_id",
+                    DevicesProvider.NAME,
+                    DevicesProvider.VALUE,
+            };
+
+            mCursor = getContentResolver().query(DevicesProvider.CONTENT_URI, mProjection, null, null, null);
+            //For every device, get device information
+
+            */
+            final Intent intent =  new Intent(this, DeviceList.class);
+            startActivity(intent);
         } else {
             //Clicked on Retry
             Log.d(TAG, "Clicked on retry");
@@ -152,6 +170,9 @@ public class MainActivity extends AppCompatActivity implements DomoVersionListen
     @Override
     public void onDevicesList(List<DmDevice> deviceList) {
         Log.d(TAG, "Got Devices list with "+((null==deviceList)?0:deviceList.size())+" devices" );
+        //try to clear database
+        getApplicationContext().getContentResolver().delete(DevicesProvider.CONTENT_URI,null,null);
+        //fill the database with new values
         for (DmDevice dmDevice :
              deviceList) {
             ContentValues values = new ContentValues();

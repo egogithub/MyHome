@@ -2,6 +2,7 @@ package net.ego.myhome;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Debug;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -41,4 +42,10 @@ public class MyHomeStartService extends Service {
             Log.i(TAG, "MSMD disconnected");
         }
     };
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        //Debug.waitForDebugger();
+    }
 }

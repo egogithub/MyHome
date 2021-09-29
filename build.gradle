@@ -1,6 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext.AWL_platform = "191846"
+    ext.AWL_platform = "203100"
 
     if (System.properties['os.name'].toLowerCase().contains('windows')) {
         println "It's Windows"
