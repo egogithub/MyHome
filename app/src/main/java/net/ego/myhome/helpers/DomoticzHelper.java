@@ -15,6 +15,7 @@ import net.ego.myhome.MyHomeApp;
 import net.ego.myhome.R;
 import net.ego.myhome.pojo.DmDevice;
 import net.ego.myhome.pojo.DomoticzInfo;
+import net.ego.myhome.pojo.TempDevice;
 
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -94,7 +95,42 @@ public class DomoticzHelper {
         return null;
     }
 
-    //public static void getUsedDevices
+
+    public static List<TempDevice> getTempDevices() {
+        try {
+            final HttpURLConnection connection = getHttpUrlConnection("/json.htm?type=devices&filter=temp&used=true&order=Name");
+            connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+            connection.setRequestProperty("Content-Type", "application/json");
+
+            final int responseCode = connection.getResponseCode();
+            Log.d(TAG, "Response Code = " + responseCode);
+
+            if (responseCode == 200) {
+                Gson gson = new Gson();
+                JsonObject domAnswerJson = gson.fromJson(new JsonReader(new InputStreamReader(connection.getInputStream(), "UTF-8")), JsonObject.class);
+                String status = domAnswerJson.get("status").getAsString();
+                Log.d(TAG, "Status = "+status);
+                if (!status.equals("OK")) {
+                    Log.e(TAG, "Got error");
+                    return null;
+                }
+                JsonArray deviceArray = domAnswerJson.getAsJsonArray("result");
+                List<TempDevice> deviceList = new ArrayList<>();
+                for (JsonElement device: deviceArray) {
+                    TempDevice tempDevice = gson.fromJson(device, TempDevice.class);
+                    deviceList.add(tempDevice);
+                }
+                Log.d(TAG, "Could not connect");
+                return deviceList;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(TAG, "Could not connect");
+            return null;
+        }
+        return null;
+    }
 
     private static HttpURLConnection getHttpUrlConnection(String api) throws Exception {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MyHomeApp.getContext());

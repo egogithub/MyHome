@@ -36,10 +36,10 @@ public class TemperatureDbContract implements BaseColumns {
             DEVICE_ID + " TEXT NOT NULL, " +
             LAST_UPDATE + " TEXT NOT NULL, " +
             DEVICE_NAME + " TEXT NOT NULL, " +
-            DEVICE_SUBTYPE + " TEXT NOT NULL, " +
+            DEVICE_SUBTYPE + " TEXT, " +
             TEMPERATURE + " INTEGER, " +
             DEVICE_TYPE + " TEXT NOT NULL, " +
-            TYPE_IMG + " TEXT NOT NULL, " +
+            TYPE_IMG + " TEXT, " +
             DEVICE_IDX + " TEXT NOT NULL)";
 
     public static final String TABLE_TEMPERATURE_CREAT_SCRIPT = TABLE_GENERIC_CREATE_SCRIPT_PREFIX +
@@ -71,8 +71,4 @@ public class TemperatureDbContract implements BaseColumns {
     //Sort Order
     public static final String ORDER_BY_DEVICE_IDX = DEVICE_IDX + " DESC";
 
-    //Content Provider stuff
-    public static final String CONTENT_PROVIDER_TEMPERATURE_AUTHORITY = "net.ego.myhome.TempAuthority";
-    public static final Uri TEMPERATURE_URI = Uri.parse(("content://"+CONTENT_PROVIDER_TEMPERATURE_AUTHORITY + "/" + TABLE_TEMPERATURE));
-    public static final String TEMPERATURE_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.myhome.tempdevices";
 }

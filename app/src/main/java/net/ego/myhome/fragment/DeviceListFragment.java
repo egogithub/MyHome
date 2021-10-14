@@ -59,7 +59,8 @@ public class DeviceListFragment extends Fragment {
                 DevicesProvider.VALUE,
         };
 
-        mCursor = getActivity().getContentResolver().query(DevicesProvider.CONTENT_URI, mProjection, null, null, null);
+        mCursor = getActivity().getContentResolver().query(DevicesProvider.CONTENT_URI, mProjection,
+                null, null, null);
         mCursorAdapter = new DevicesCursorAdapter(getActivity(), mCursor, 0);
         mListView.setAdapter(mCursorAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

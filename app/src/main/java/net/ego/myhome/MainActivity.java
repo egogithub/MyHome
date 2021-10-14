@@ -20,11 +20,16 @@ import android.widget.TextView;
 
 import net.ego.myhome.async.GetDeviceListAsyncTask;
 import net.ego.myhome.async.GetDomoVersionAsyncTask;
+import net.ego.myhome.async.GetTempDeviceListAsyncTask;
+import net.ego.myhome.database.TemperatureDbContract;
 import net.ego.myhome.interfaces.DomoDeviceListListener;
 import net.ego.myhome.interfaces.DomoVersionListener;
+import net.ego.myhome.interfaces.TempDeviceListListener;
 import net.ego.myhome.pojo.DmDevice;
 import net.ego.myhome.pojo.DomoticzInfo;
+import net.ego.myhome.pojo.TempDevice;
 import net.ego.myhome.providers.DevicesProvider;
+import net.ego.myhome.providers.TempContentProvider;
 
 import java.util.List;
 
@@ -32,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements DomoVersionListen
     private static final String TAG="MainActivity";
     private GetDomoVersionAsyncTask mVersionAsyncTask;
     private GetDeviceListAsyncTask mDeviceListAsyncTask;
+    private GetTempDeviceListAsyncTask mTempDeviceAsyncTask;
     private static boolean connected = false;
     private Button btnMain;
     private Cursor mCursor;
@@ -98,6 +104,42 @@ public class MainActivity extends AppCompatActivity implements DomoVersionListen
         mDeviceListAsyncTask.execute();
     }
 
+    private void getTempDevices() {
+        Log.d(TAG,"Getting temperature devices");
+        mTempDeviceAsyncTask = new GetTempDeviceListAsyncTask(new TempDeviceListListener() {
+            @Override
+            public void onTempDeviceList(List<TempDevice> tempDeviceList) {
+                Log.d(TAG, "Got Temperature Devices list with "+((null==tempDeviceList)?0:tempDeviceList.size())+" devices" );
+                getApplicationContext().getContentResolver().delete(TempContentProvider.TEMPERATURE_URI,null,null);
+                for (TempDevice tDevice : tempDeviceList) {
+                    ContentValues values = new ContentValues();
+                    values.put(TempContentProvider.DEVICE_IDX, tDevice.idx);
+                    values.put(TempContentProvider.DEVICE_TYPE, tDevice.Type);
+                    values.put(TempContentProvider.DEVICE_NAME, tDevice.Name);
+                    values.put(TempContentProvider.DEVICE_DATA, tDevice.Data);
+                    values.put(TempContentProvider.DEW_POINT, tDevice.DewPoint);
+                    values.put(TempContentProvider.HUMIDITY_STATUS, tDevice.HumidityStatus);
+                    values.put(TempContentProvider.LAST_UPDATE, tDevice.LastUpdate);
+                    values.put(TempContentProvider.DEVICE_ID, tDevice.ID);
+                    values.put(TempContentProvider.HUMIDITY, tDevice.Humidity);
+                    values.put(TempContentProvider.TEMPERATURE, tDevice.Temp);
+                    values.put(TempContentProvider.FAVORITE, tDevice.Favorite);
+                    values.put(TempContentProvider.DEVICE_SUBTYPE, tDevice.SubType);
+                    values.put(TempContentProvider.TYPE_IMG, tDevice.TypeImg);
+                    Uri uri = getContentResolver().insert(TempContentProvider.TEMPERATURE_URI, values);
+                    Log.d(TAG, "URI to insert is "+uri.toString());
+
+                }
+                Bundle b = new Bundle();
+                b.putInt(TempDeviceActivity.NUMBER_DEVICES, tempDeviceList.size());
+                final Intent intent = new Intent(MainActivity.this, TempDeviceActivity.class);
+                intent.putExtras(b);
+                startActivity(intent);
+            }
+        });
+        mTempDeviceAsyncTask.execute();
+    }
+
     @Override
     public void onDomoticzVersion(DomoticzInfo info) {
         btnMain.setEnabled(true);
@@ -117,7 +159,8 @@ public class MainActivity extends AppCompatActivity implements DomoVersionListen
             //btnMain.setEnabled(true);
             btnMain.setText("NEXT");
             // Get devices list from domoticz server
-            getDeviceList();
+
+            //getDeviceList();
             connected=true;
             //btnMain.setVisibility(View.VISIBLE);
             //Now, get the devices info (populate database)
@@ -140,8 +183,9 @@ public class MainActivity extends AppCompatActivity implements DomoVersionListen
             //For every device, get device information
 
             */
-            final Intent intent =  new Intent(this, DeviceList.class);
-            startActivity(intent);
+            //final Intent intent =  new Intent(this, DeviceList.class);
+            //startActivity(intent);
+            getTempDevices();
         } else {
             //Clicked on Retry
             Log.d(TAG, "Clicked on retry");
@@ -182,24 +226,4 @@ public class MainActivity extends AppCompatActivity implements DomoVersionListen
             Log.d(TAG, "URI to insert is "+uri.toString());
         }
     }
-/*
-
-    public void onClickRetrieveStudents(View view) {
-        // Retrieve student records
-        String URL = "content://com.example.MyApplication.StudentsProvider";
-
-        Uri students = Uri.parse(URL);
-        Cursor c = managedQuery(students, null, null, null, "name");
-
-        if (c.moveToFirst()) {
-            do{
-                Toast.makeText(this,
-                        c.getString(c.getColumnIndex(StudentsProvider._ID)) +
-                                ", " +  c.getString(c.getColumnIndex( StudentsProvider.NAME)) +
-                                ", " + c.getString(c.getColumnIndex( StudentsProvider.GRADE)),
-                        Toast.LENGTH_SHORT).show();
-            } while (c.moveToNext());
-        }
-    }
-*/
 }

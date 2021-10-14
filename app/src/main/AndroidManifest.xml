@@ -24,9 +24,9 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".DomoticzLogin" />
+        <!--activity android:name=".DomoticzLogin" /-->
         <activity android:name=".MainActivity" />
-
+        <activity android:name=".TempDeviceActivity" />
         <provider
             android:name=".providers.DevicesProvider"
             android:authorities="net.ego.myhome.providers.DevicesProvider"

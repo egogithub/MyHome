@@ -17,7 +17,7 @@ public class DeviceList extends AppCompatActivity implements DeviceListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_device_list);
+        setContentView(R.layout.activity_device_list_2);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().executePendingTransactions();

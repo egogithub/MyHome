@@ -1,12 +1,14 @@
 package net.ego.myhome.pojo;
 
 public class TempDevice extends Device {
-    public static final String idx = "Index";
-    public static final String Type = "Type";
-    public static final String Name = "Name";
-    public static final String Data = "Data";
-    public static final String DewPoint = "Dewpoint";
-    public static final String HumidityStatus = "Humistatus";
-    public static final String LastUpdate = "Lastupdate";
-    public static final String ID = "SensorId";
+    //public String idx ;// = "Index";
+    //public String Type;// = "Type";
+    //public String Name;// = "Name";
+    public String Data;// = "Data";
+    public String DewPoint;// = "Dewpoint";
+    public String HumidityStatus;// = "Humistatus";
+    public String LastUpdate;// = "Lastupdate";
+//    public String ID;// = "SensorId";
+    public String Temp;// = "Temp";
+    public String Humidity;// = "Humidity";
 }
