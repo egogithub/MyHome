@@ -120,10 +120,46 @@ public class DomoticzHelper {
                     TempDevice tempDevice = gson.fromJson(device, TempDevice.class);
                     deviceList.add(tempDevice);
                 }
-                Log.d(TAG, "Could not connect");
+                //Log.d(TAG, "Could not connect");
                 return deviceList;
             }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(TAG, "Could not connect");
+            return null;
+        }
+        return null;
+    }
+
+    public static TempDevice getTempDeviceInfo(String deviceID){
+        try {
+            Log.d(TAG, "Refreshing temperature device "+deviceID);
+            final HttpURLConnection connection = getHttpUrlConnection("/json.htm?type=devices&rid="+deviceID);
+            connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+            connection.setRequestProperty("Content-Type", "application/json");
+
+            final int responseCode = connection.getResponseCode();
+            Log.d(TAG, "Response Code = " + responseCode);
+            if (responseCode == 200) {
+                Gson gson = new Gson();
+                JsonObject domAnswerJson = gson.fromJson(new JsonReader(new InputStreamReader(connection.getInputStream(), "UTF-8")), JsonObject.class);
+                String status = domAnswerJson.get("status").getAsString();
+                Log.d(TAG, "Status = " + status);
+                if (!status.equals("OK")) {
+                    Log.e(TAG, "Got error");
+                    return null;
+                }
+                JsonArray deviceArray = domAnswerJson.getAsJsonArray("result");
+                JsonElement device = deviceArray.get(0);
+                TempDevice tempDevice = gson.fromJson(device, TempDevice.class);
+                //Log.d(TAG, "Could not connect");
+                if (null == tempDevice)
+                    Log.d(TAG, "tempDevice is null!");
+                return tempDevice;
+            } else {
+                Log.d(TAG, "Got response code +" + responseCode);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             Log.d(TAG, "Could not connect");

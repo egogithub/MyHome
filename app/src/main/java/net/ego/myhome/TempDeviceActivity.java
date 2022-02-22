@@ -71,6 +71,7 @@ public class TempDeviceActivity extends AppCompatActivity {
                 bundle.putString(TemperatureDbContract.DEW_POINT, cursor.getString(cursor.getColumnIndex(TemperatureDbContract.DEW_POINT)));
                 bundle.putString(TemperatureDbContract.LAST_UPDATE, cursor.getString(cursor.getColumnIndex(TemperatureDbContract.LAST_UPDATE)));
                 bundle.putString(TemperatureDbContract.DEVICE_ID, cursor.getString(cursor.getColumnIndex(TemperatureDbContract.DEVICE_ID)));
+                bundle.putString(TemperatureDbContract.DEVICE_IDX, cursor.getString(cursor.getColumnIndex(TemperatureDbContract.DEVICE_IDX)));
 //                Log.d(TAG, strBuild.toString());
 
                 final TempFragment fragment = new TempFragment();
